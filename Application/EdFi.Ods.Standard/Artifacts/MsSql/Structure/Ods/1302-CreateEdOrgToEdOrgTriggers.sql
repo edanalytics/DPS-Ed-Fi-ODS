@@ -80,13 +80,13 @@ BEGIN
     SET NOCOUNT ON
     MERGE INTO auth.EducationOrganizationIdToEducationOrganizationId eoeo1
     USING (
-        SELECT i.CommunityOrganizationId, i.CommunityProvider
+        SELECT i.CommunityOrganizationId, i.CommunityProviderId
         FROM inserted i
         WHERE i.CommunityOrganizationId IS NOT NULL) eoeo2
     ON eoeo1.SourceEducationOrganizationId = eoeo2.CommunityOrganizationId
-        AND eoeo1.TargetEducationOrganizationId = eoeo2.CommunityProvider
+        AND eoeo1.TargetEducationOrganizationId = eoeo2.CommunityProviderId
     WHEN NOT MATCHED THEN
-        INSERT VALUES(eoeo2.CommunityOrganizationId, eoeo2.CommunityProvider);
+        INSERT VALUES(eoeo2.CommunityOrganizationId, eoeo2.CommunityProviderId);
 END
 GO
 
@@ -104,8 +104,6 @@ BEGIN
             ON TargetEducationOrganizationId = d.CommunityOrganizationId
         INNER JOIN inserted i
             ON d.CommunityProviderId = i.CommunityProviderId
-        -- CommunityOrganizationId is changing and was not originally null
-        -- WHERE d.CommunityOrganizationId IS NOT NULL
         WHERE (i.CommunityOrganizationId IS NULL OR d.CommunityOrganizationId <> i.CommunityOrganizationId))
 
     MERGE INTO auth.EducationOrganizationIdToEducationOrganizationId eoeo1

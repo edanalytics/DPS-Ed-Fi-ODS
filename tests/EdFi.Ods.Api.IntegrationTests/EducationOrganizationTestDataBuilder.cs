@@ -212,6 +212,17 @@ namespace EdFi.Ods.Api.IntegrationTests
             return this;
         }
 
+        public EducationOrganizationTestDataBuilder UpdateCommunityProvider(int communityProviderId, int? communityOrganizationId = null)
+        {
+            _sql.AppendLine(
+                $@"UPDATE edfi.CommunityProvider SET
+                    CommunityOrganizationId = {ToSqlValue(communityOrganizationId)}
+                WHERE CommunityProviderId = {communityProviderId};"
+            );
+
+            return this;
+        }
+
         private string ToSqlValue<T>(T? input) where T : struct
         {
             return input.HasValue

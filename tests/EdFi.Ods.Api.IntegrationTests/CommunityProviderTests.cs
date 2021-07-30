@@ -14,16 +14,71 @@ namespace EdFi.Ods.Api.IntegrationTests
         public void When_inserting_and_deleting_community_provider_without_community_organization_should_update_tuples()
         {
             Builder
-                .AddCommunityProvider(8001)
+                .AddCommunityProvider(9001)
                 .Execute();
 
-            EducationOrganizationHelper.ShouldContainTuples(Connection, (8001, 8001));
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (9001, 9001));
 
             Builder
-                .DeleteEducationOrganization(8001)
+                .DeleteEducationOrganization(9001)
                 .Execute();
 
-            EducationOrganizationHelper.ShouldNotContainTuples(Connection, (8001, 8001));
+            EducationOrganizationHelper.ShouldNotContainTuples(Connection, (9001, 9001));
+        }
+
+        [Test]
+        public void When_inserting_and_deleting_community_provider_with_community_organization_should_update_tuples()
+        {
+            Builder
+                .AddCommunityOrganization(900)
+                .AddCommunityProvider(9001, 900)
+                .Execute();
+
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (900, 900), (9001, 9001), (900, 9001));
+
+            Builder
+                .DeleteEducationOrganization(9001)
+                .Execute();
+
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (900, 900));
+            EducationOrganizationHelper.ShouldNotContainTuples(Connection, (9001, 9001), (900, 9001));
+        }
+
+        [Test]
+        public void
+            When_updating_community_provider_without_community_organization_to_with_community_organization_should_update_tuples()
+        {
+            Builder
+                .AddCommunityOrganization(900)
+                .AddCommunityProvider(9001)
+                .Execute();
+
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (900, 900), (9001, 9001));
+
+            Builder
+                .UpdateCommunityProvider(9001, 900)
+                .Execute();
+
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (900, 900), (9001, 9001), (900, 9001));
+        }
+
+        [Test]
+        public void
+            When_updating_community_provider_with_community_organization_to_without_community_organization_should_update_tuples()
+        {
+            Builder
+                .AddCommunityOrganization(900)
+                .AddCommunityProvider(9001, 900)
+                .Execute();
+
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (900, 900), (9001, 9001), (900, 9001));
+
+            Builder
+                .UpdateCommunityProvider(9001)
+                .Execute();
+
+            EducationOrganizationHelper.ShouldContainTuples(Connection, (900, 900), (9001, 9001));
+            EducationOrganizationHelper.ShouldNotContainTuples(Connection, (900, 9001));
         }
     }
 }
